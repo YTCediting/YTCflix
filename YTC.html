@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YTCflix</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#080808;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow-x:hidden;
+}
+
+/* NAVBAR */
+.navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:70px;
+    z-index:1000;
+
+    display:flex;
+    align-items:center;
+    padding:0 4%;
+
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,.95),
+        transparent
+    );
+
+    transition:.3s;
+}
+
+.navbar.scrolled{
+    background:#080808;
+}
+
+.logo{
+    color:#e50914;
+    font-size:28px;
+    font-weight:900;
+    margin-right:35px;
+    cursor:pointer;
+}
+
+.logo span{
+    color:white;
+}
+
+.nav-links{
+    display:flex;
+    gap:24px;
+    list-style:none;
+    font-size:14px;
+}
+
+.nav-links li{
+    cursor:pointer;
+}
+
+.nav-links li:hover{
+    color:#aaa;
+}
+
+.nav-right{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.search input{
+    width:210px;
+    padding:9px 12px;
+    background:#111;
+    border:1px solid #555;
+    color:white;
+    outline:none;
+}
+
+.profile{
+    width:35px;
+    height:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:6px;
+    font-weight:bold;
+    background:linear-gradient(135deg,#ff2445,#7224ff);
+}
+
+/* HERO */
+.hero{
+    height:88vh;
+    min-height:620px;
+
+    display:flex;
+    align-items:center;
+    padding:0 5%;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            #080808 0%,
+            rgba(8,8,8,.8) 30%,
+            rgba(8,8,8,.15) 75%
+        ),
+        linear-gradient(
+            0deg,
+            #080808,
+            transparent 50%
+        ),
+        url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=2200&q=90");
+
+    background-size:cover;
+    background-position:center;
+}
+
+.hero-content{
+    max-width:600px;
+}
+
+.badge{
+    display:inline-block;
+    padding:7px 13px;
+    margin-bottom:18px;
+    border:1px solid #555;
+    border-radius:20px;
+    font-size:11px;
+}
+
+.hero h1{
+    font-size:80px;
+    line-height:.9;
+    letter-spacing:-5px;
+    margin-bottom:20px;
+}
+
+.hero-info{
+    display:flex;
+    gap:12px;
+    color:#ddd;
+    font-size:14px;
+    margin-bottom:18px;
+}
+
+.hero-description{
+    max-width:540px;
+    color:#ddd;
+    line-height:1.6;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:12px;
+    margin-top:25px;
+}
+
+.btn{
+    border:0;
+    padding:13px 24px;
+    border-radius:4px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.play-btn{
+    background:white;
+    color:black;
+}
+
+.info-btn{
+    background:#555;
+    color:white;
+}
+
+/* CONTENT */
+.content{
+    position:relative;
+    z-index:5;
+    margin-top:-70px;
+    padding-bottom:80px;
+}
+
+.section{
+    margin-bottom:40px;
+}
+
+.section-header{
+    padding:0 4%;
+    margin-bottom:12px;
+}
+
+.section-title{
+    font-size:21px;
+}
+
+.movie-row{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    padding:10px 4% 20px;
+    scrollbar-width:none;
+}
+
+.movie-row::-webkit-scrollbar{
+    display:none;
+}
+
+/* CARDS */
+.card{
+    position:relative;
+    flex:0 0 190px;
+    height:280px;
+    overflow:hidden;
+    border-radius:6px;
+    background:#181818;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:scale(1.07);
+    z-index:20;
+    box-shadow:0 20px 50px rgba(0,0,0,.8);
+}
+
+.card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.card-gradient{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        transparent 35%,
+        rgba(0,0,0,.95)
+    );
+    opacity:0;
+    transition:.3s;
+}
+
+.card:hover .card-gradient{
+    opacity:1;
+}
+
+.card-info{
+    position:absolute;
+    left:12px;
+    right:12px;
+    bottom:12px;
+    opacity:0;
+    transition:.3s;
+}
+
+.card:hover .card-info{
+    opacity:1;
+}
+
+.card-title{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.card-meta{
+    color:#bbb;
+    font-size:11px;
+}
+
+.card-buttons{
+    display:flex;
+    gap:7px;
+    margin-bottom:10px;
+}
+
+.circle{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    border:1px solid #aaa;
+    background:rgba(0,0,0,.8);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+.circle:hover{
+    background:white;
+    color:black;
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    background:rgba(0,0,0,.85);
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(850px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#181818;
+    border-radius:10px;
+}
+
+.modal-image{
+    height:400px;
+    background-size:cover;
+    background-position:center;
+    position:relative;
+}
+
+.modal-image:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        transparent,
+        #181818
+    );
+}
+
+.close{
+    position:absolute;
+    top:15px;
+    right:15px;
+    z-index:10;
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:50%;
+    background:#111;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.modal-content{
+    position:relative;
+    z-index:5;
+    margin-top:-70px;
+    padding:30px;
+}
+
+.modal-content h2{
+    font-size:35px;
+    margin-bottom:12px;
+}
+
+.modal-content p{
+    color:#ccc;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+
+    .nav-links{
+        display:none;
+    }
+
+    .search input{
+        width:140px;
+    }
+
+    .hero{
+        height:75vh;
+        min-height:550px;
+    }
+
+    .hero h1{
+        font-size:50px;
+    }
+
+    .card{
+        flex-basis:150px;
+        height:220px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar" id="navbar">
+
+    <div class="logo" onclick="goHome()">
+        YTC<span>flix</span>
+    </div>
+
+    <ul class="nav-links">
+        <li onclick="goHome()">Home</li>
+        <li onclick="goTo('trending')">Trending</li>
+        <li onclick="goTo('movies')">Movies</li>
+        <li onclick="goTo('series')">Series</li>
+        <li onclick="goTo('mylist')">My List</li>
+    </ul>
+
+    <div class="nav-right">
+
+        <div class="search">
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search..."
+                oninput="searchMovies()"
+            >
+        </div>
+
+        <div class="profile">Y</div>
+
+    </div>
+
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+            YTCFLIX ORIGINAL
+        </div>
+
+        <h1>
+            THE<br>
+            LAST<br>
+            HORIZON
+        </h1>
+
+        <div class="hero-info">
+            <span>2026</span>
+            <span>•</span>
+            <span>2h 18m</span>
+            <span>•</span>
+            <span>16+</span>
+            <span>•</span>
+            <span>4K</span>
+        </div>
+
+        <p class="hero-description">
+            After humanity discovers a mysterious signal
+            beyond the solar system, a lone crew begins
+            a journey into the unknown.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button
+                class="btn play-btn"
+                onclick="alert('Demo player')"
+            >
+                ▶ Play
+            </button>
+
+            <button class="btn info-btn">
+                ⓘ More Info
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CONTENT ================= -->
+
+<main class="content">
+
+
+<section
+    class="section"
+    id="trending"
+>
+
+    <div class="section-header">
+        <h2 class="section-title">
+            🔥 Trending Now
+        </h2>
+    </div>
+
+    <div
+        class="movie-row"
+        id="trendingRow"
+    ></div>
+
+</section>
+
+
+<section
+    class="section"
+    id="movies"
+>
+
+    <div class="section-header">
+        <h2 class="section-title">
+            Popular Movies
+        </h2>
+    </div>
+
+    <div
+        class="movie-row"
+        id="movieRow"
+    ></div>
+
+</section>
+
+
+<section
+    class="section"
+    id="series"
+>
+
+    <div class="section-header">
+        <h2 class="section-title">
+            Popular Series
+        </h2>
+    </div>
+
+    <div
+        class="movie-row"
+        id="seriesRow"
+    ></div>
+
+</section>
+
+
+<section
+    class="section"
+    id="mylist"
+>
+
+    <div class="section-header">
+        <h2 class="section-title">
+            ❤️ My List
+        </h2>
+    </div>
+
+    <div
+        class="movie-row"
+        id="myListRow"
+    ></div>
+
+</section>
+
+</main>
+
+
+<!-- ================= MODAL ================= -->
+
+<div
+    class="modal"
+    id="modal"
+>
+
+    <div class="modal-box">
+
+        <div
+            class="modal-image"
+            id="modalImage"
+        >
+
+            <button
+                class="close"
+                onclick="closeModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="modal-content">
+
+            <h2 id="modalTitle">
+                Weapons
+            </h2>
+
+            <p id="modalDescription">
+                2025 • Horror / Mystery
+            </p>
+
+            <button
+                class="btn play-btn"
+                id="modalPlay"
+            >
+                ▶ Play
+            </button>
+
+            <button
+                class="btn info-btn"
+                id="modalAdd"
+            >
+                + My List
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+/* ==================================================
+   MOVIES
+================================================== */
+
+const movies = [
+
+    /* ==============================
+       WEAPONS
+    ============================== */
+
+    {
+        title: "Weapons",
+
+        year: "2025",
+
+        genre: "Horror / Mystery",
+
+        image: "YTCFlix.com.png",
+
+        /*
+          Put an official/legal watch URL here.
+        */
+
+        url: "https://4khdhub.one/weapons-movie-3394/"
+    },
+
+
+    {
+        title: "Neon City",
+
+        year: "2026",
+
+        genre: "Sci-Fi",
+
+        image:
+        "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    },
+
+
+    {
+        title: "Into The Wild",
+
+        year: "2025",
+
+        genre: "Adventure",
+
+        image:
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    },
+
+
+    {
+        title: "Night Runner",
+
+        year: "2026",
+
+        genre: "Action",
+
+        image:
+        "https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    },
+
+
+    {
+        title: "Deep Space",
+
+        year: "2025",
+
+        genre: "Sci-Fi",
+
+        image:
+        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    },
+
+
+    {
+        title: "The Mountain",
+
+        year: "2024",
+
+        genre: "Drama",
+
+        image:
+        "https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    },
+
+
+    {
+        title: "Ocean Blue",
+
+        year: "2026",
+
+        genre: "Documentary",
+
+        image:
+        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    },
+
+
+    {
+        title: "Dark Forest",
+
+        year: "2025",
+
+        genre: "Mystery",
+
+        image:
+        "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=90",
+
+        url: ""
+    }
+
+];
+
+
+/* ==================================================
+   MY LIST
+================================================== */
+
+let myList = [];
+
+
+/* ==================================================
+   CREATE CARD
+================================================== */
+
+function createCard(movie){
+
+    const card =
+        document.createElement("div");
+
+
+    card.className = "card";
+
+
+    card.innerHTML = `
+
+        <img
+            src="${movie.image}"
+            alt="${movie.title}"
+        >
+
+        <div class="card-gradient"></div>
+
+        <div class="card-info">
+
+            <div class="card-buttons">
+
+                <button
+                    class="circle play"
+                >
+                    ▶
+                </button>
+
+                <button
+                    class="circle add"
+                >
+                    +
+                </button>
+
+                <button
+                    class="circle info"
+                >
+                    ⓘ
+                </button>
+
+            </div>
+
+            <div class="card-title">
+                ${movie.title}
+            </div>
+
+            <div class="card-meta">
+                ${movie.year} • ${movie.genre}
+            </div>
+
+        </div>
+    `;
+
+
+    /* CARD CLICK */
+
+    card.addEventListener(
+        "click",
+        function(){
+
+            openMovie(movie);
+
+        }
+    );
+
+
+    /* PLAY BUTTON */
+
+    card
+        .querySelector(".play")
+        .addEventListener(
+            "click",
+            function(event){
+
+                event.stopPropagation();
+
+                playMovie(movie);
+
+            }
+        );
+
+
+    /* ADD BUTTON */
+
+    card
+        .querySelector(".add")
+        .addEventListener(
+            "click",
+            function(event){
+
+                event.stopPropagation();
+
+                addToList(movie);
+
+            }
+        );
+
+
+    /* INFO BUTTON */
+
+    card
+        .querySelector(".info")
+        .addEventListener(
+            "click",
+            function(event){
+
+                event.stopPropagation();
+
+                openMovie(movie);
+
+            }
+        );
+
+
+    return card;
+
+}
+
+
+/* ==================================================
+   LOAD ROW
+================================================== */
+
+function loadRow(id,list){
+
+    const row =
+        document.getElementById(id);
+
+
+    if(!row){
+        return;
+    }
+
+
+    row.innerHTML = "";
+
+
+    list.forEach(
+        function(movie){
+
+            row.appendChild(
+                createCard(movie)
+            );
+
+        }
+    );
+
+}
+
+
+/* ==================================================
+   LOAD ALL SECTIONS
+================================================== */
+
+loadRow(
+    "trendingRow",
+    movies
+);
+
+
+loadRow(
+    "movieRow",
+    movies.slice(0,6)
+);
+
+
+loadRow(
+    "seriesRow",
+    movies.slice(2)
+);
+
+
+/* ==================================================
+   OPEN MOVIE MODAL
+================================================== */
+
+function openMovie(movie){
+
+    document
+        .getElementById("modalTitle")
+        .textContent =
+            movie.title;
+
+
+    document
+        .getElementById("modalImage")
+        .style
+        .backgroundImage =
+            `url("${movie.image}")`;
+
+
+    document
+        .getElementById("modalDescription")
+        .textContent =
+            movie.year +
+            " • " +
+            movie.genre;
+
+
+    document
+        .getElementById("modalPlay")
+        .onclick =
+            function(){
+
+                playMovie(movie);
+
+            };
+
+
+    document
+        .getElementById("modalAdd")
+        .onclick =
+            function(){
+
+                addToList(movie);
+
+            };
+
+
+    document
+        .getElementById("modal")
+        .classList.add("show");
+
+}
+
+
+/* ==================================================
+   PLAY / REDIRECT
+================================================== */
+
+function playMovie(movie){
+
+    /*
+       The Play button redirects to movie.url
+       when an official/legal URL is supplied.
+    */
+
+    if(
+        movie.url &&
+        movie.url.trim() !== ""
+    ){
+
+        window.location.href =
+            movie.url;
+
+        return;
+
+    }
+
+
+    alert(
+        "No official watch URL has been added for " +
+        movie.title +
+        "."
+    );
+
+}
+
+
+/* ==================================================
+   CLOSE MODAL
+================================================== */
+
+function closeModal(){
+
+    document
+        .getElementById("modal")
+        .classList.remove("show");
+
+}
+
+
+/* ==================================================
+   ADD TO MY LIST
+================================================== */
+
+function addToList(movie){
+
+    const exists =
+        myList.some(
+            function(item){
+
+                return (
+                    item.title ===
+                    movie.title
+                );
+
+            }
+        );
+
+
+    if(exists){
+
+        alert(
+            movie.title +
+            " is already in My List."
+        );
+
+        return;
+
+    }
+
+
+    myList.push(movie);
+
+    renderMyList();
+
+
+    alert(
+        movie.title +
+        " added to My List ❤️"
+    );
+
+}
+
+
+/* ==================================================
+   MY LIST
+================================================== */
+
+function renderMyList(){
+
+    const row =
+        document.getElementById(
+            "myListRow"
+        );
+
+
+    row.innerHTML = "";
+
+
+    if(myList.length === 0){
+
+        row.innerHTML = `
+
+            <div class="empty-list">
+
+                Your list is empty.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    myList.forEach(
+        function(movie){
+
+            row.appendChild(
+                createCard(movie)
+            );
+
+        }
+    );
+
+}
+
+
+renderMyList();
+
+
+/* ==================================================
+   SEARCH
+================================================== */
+
+function searchMovies(){
+
+    const query =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    const results =
+        movies.filter(
+            function(movie){
+
+                return (
+
+                    movie.title
+                        .toLowerCase()
+                        .includes(query)
+
+                    ||
+
+                    movie.genre
+                        .toLowerCase()
+                        .includes(query)
+
+                );
+
+            }
+        );
+
+
+    loadRow(
+        "trendingRow",
+        query === ""
+            ? movies
+            : results
+    );
+
+}
+
+
+/* ==================================================
+   NAVIGATION
+================================================== */
+
+function goHome(){
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}
+
+
+function goTo(id){
+
+    const section =
+        document.getElementById(id);
+
+
+    if(section){
+
+        section.scrollIntoView({
+
+            behavior:"smooth"
+
+        });
+
+    }
+
+}
+
+
+/* ==================================================
+   NAVBAR SCROLL
+================================================== */
+
+window.addEventListener(
+    "scroll",
+    function(){
+
+        const navbar =
+            document.getElementById(
+                "navbar"
+            );
+
+
+        if(
+            window.scrollY > 40
+        ){
+
+            navbar.classList.add(
+                "scrolled"
+            );
+
+        }
+
+        else{
+
+            navbar.classList.remove(
+                "scrolled"
+            );
+
+        }
+
+    }
+);
+
+
+/* ==================================================
+   CLOSE MODAL WHEN CLICKING BACKGROUND
+================================================== */
+
+document
+    .getElementById("modal")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target.id === "modal"
+            ){
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+
+/* ==================================================
+   ESC KEY
+================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Escape"
+        ){
+
+            closeModal();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
