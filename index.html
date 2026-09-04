@@ -1007,21 +1007,30 @@ function openMovie(movie){
 
 function playMovie(movie){
 
-    if(movie.url && movie.url.trim() !== ""){
+    /*
+       The Play button redirects to movie.url
+       when an official/legal URL is supplied.
+    */
 
-        const audio = document.getElementById("hiddenAudio");
+    if(
+        movie.url &&
+        movie.url.trim() !== ""
+    ){
 
-        audio.src = movie.url;
-        audio.play();
+        window.location.href =
+            movie.url;
 
         return;
+
     }
 
+
     alert(
-        "No audio URL has been added for " +
+        "No official watch URL has been added for " +
         movie.title +
         "."
     );
+
 }
 
 
