@@ -660,7 +660,7 @@ const movies = [
           Put an official/legal watch URL here.
         */
 
-        URL: " https://4khdhub.one/weapons-movie-3394/ "
+        url:" https://4khdhub.one/weapons-movie-3394/ "
     },
 
 
@@ -674,7 +674,7 @@ const movies = [
         image:
         "toxic.png",
 
-        URL: " https://morencius.com/file/phk2shr9fmsq "
+        url:" https://morencius.com/file/phk2shr9fmsq "
     },
 
 
@@ -688,7 +688,7 @@ const movies = [
         image:
         "Mirzapur.png",
 
-        URL: " https://hubcloud.cx/drive/rif2wrfld2fclx1 "
+        url:" https://hubcloud.cx/drive/rif2wrfld2fclx1 "
     },
 
 
@@ -1007,34 +1007,21 @@ function openMovie(movie){
 
 function playMovie(movie){
 
-    if(
-        movie.url &&
-        movie.url.trim() !== ""
-    ){
-
-        const audio =
-            document.getElementById("hiddenAudio");
-
-        if(audio){
-
-            audio.src = movie.url;
-
-            audio.play().catch(
-                function(error){
-                    console.log("Playback failed:", error);
-                }
-            );
-
-            return;
-        }
+    if(!movie || !movie.url){
+        alert("No URL added for " + movie.title);
+        return;
     }
 
-    alert(
-        "No audio/watch URL has been added for " +
-        movie.title +
-        "."
-    );
+    const url = movie.url.trim();
 
+    if(url === ""){
+        alert("No URL added for " + movie.title);
+        return;
+    }
+
+    console.log("Opening:", url);
+
+    window.location.href = url;
 }
 
 
