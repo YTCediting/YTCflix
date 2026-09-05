@@ -380,6 +380,69 @@ body{
     margin-bottom:20px;
 }
 
+
+/* ================= SERIES EPISODES ================= */
+
+.episode-list{
+    display:none;
+    margin:0 0 20px;
+    border:1px solid #333;
+    border-radius:8px;
+    overflow:hidden;
+    background:#111;
+}
+
+.episode-list.show{
+    display:block;
+}
+
+.episode-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px 14px;
+    border-bottom:1px solid #292929;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.episode-item:last-child{
+    border-bottom:0;
+}
+
+.episode-item:hover{
+    background:#222;
+}
+
+.episode-number{
+    min-width:58px;
+    color:#aaa;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.episode-name{
+    flex:1;
+    color:#fff;
+    font-size:13px;
+    line-height:1.35;
+}
+
+.episode-play{
+    width:30px;
+    height:30px;
+    border:1px solid #666;
+    border-radius:50%;
+    background:#181818;
+    color:#fff;
+    cursor:pointer;
+}
+
+.episode-item:hover .episode-play{
+    background:#fff;
+    color:#000;
+}
+
 /* MOBILE */
 @media(max-width:700px){
 
@@ -612,6 +675,9 @@ body{
                 2025 • Horror / Mystery
             </p>
 
+            
+            <div class="episode-list" id="episodeList"></div>
+
             <button
                 class="btn play-btn"
                 id="modalPlay"
@@ -707,17 +773,58 @@ const movies = [
 
 
     {
-        title: "Deep Space",
+        title: "1899 (Season 1)",
 
-        year: "2025",
+        year: "2022",
 
-        genre: "Sci-Fi",
+        genre: "Drama | Mystery | Thriller",
 
         image:
-        "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=90",
+        "1899 (Season 1).png",
 
-        url: ""
-    },
+          episodes: [
+        {
+            episode: 1,
+            title: "1899.S01.E01.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://streamtape.cc/v/yjLLd9a3PmS1bgl/1899.S01.E01.720p.WEB-DL.Hindi.5.1-English.ESub.x264-HDHub4u.Tv.mkv"
+        },
+        {
+            episode: 2,
+            title: "1899.S01.E02.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/1rleeodlurx32x2"
+        },
+        {
+            episode: 3,
+            title: "1899.S01.E03.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/ovaee9azhe1a3is"
+        },
+        {
+            episode: 4,
+            title: "1899.S01.E04.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/1pzbjbj2d4ddi4r"
+        },
+        {
+            episode: 5,
+            title: "1899.S01.E05.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/quvwuhuvchu9rkr"
+        },
+        {
+            episode: 6,
+            title: "1899.S01.E06.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/ly1lgl2__lg5kyp"
+        },
+        {
+            episode: 7,
+            title: "1899.S01.E07.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/4ztknemzrur6n7z"
+        },
+        {
+            episode: 8,
+            title: "1899.S01.E08.720p.10Bit.WEB-DL.Hindi.5.1",
+            url: "https://hubcloud.cx/drive/u3ciusmafrcttfu"
+        }
+    ]
+},
 
 
     {
@@ -953,57 +1060,119 @@ loadRow(
 
 function openMovie(movie){
 
-    document
-        .getElementById("modalTitle")
-        .textContent =
-            movie.title;
+    if(!movie){
+        return;
+    }
 
+    document.getElementById("modalTitle").textContent = movie.title;
 
-    document
-        .getElementById("modalImage")
-        .style
-        .backgroundImage =
-            `url("${movie.image}")`;
+    document.getElementById("modalImage").style.backgroundImage =
+        `url("${movie.image}")`;
 
+    document.getElementById("modalDescription").textContent =
+        movie.year + " • " + movie.genre;
 
-    document
-        .getElementById("modalDescription")
-        .textContent =
-            movie.year +
-            " • " +
-            movie.genre;
+    const episodeList = document.getElementById("episodeList");
+    const modalPlay = document.getElementById("modalPlay");
 
+    /*
+       SERIES:
+       If episodes[] exists, show every episode in the modal.
+    */
+    if(Array.isArray(movie.episodes) && movie.episodes.length > 0){
 
-    document
-        .getElementById("modalPlay")
-        .onclick =
-            function(){
+        episodeList.innerHTML = "";
 
-                playMovie(movie);
+        movie.episodes.forEach(function(ep){
 
-            };
+            const item = document.createElement("div");
+            item.className = "episode-item";
 
+            const number = document.createElement("div");
+            number.className = "episode-number";
+            number.textContent =
+                "S01 E" + String(ep.episode).padStart(2, "0");
 
-    document
-        .getElementById("modalAdd")
-        .onclick =
-            function(){
+            const name = document.createElement("div");
+            name.className = "episode-name";
+            name.textContent =
+                ep.title || ("Episode " + ep.episode);
 
-                addToList(movie);
+            const play = document.createElement("button");
+            play.className = "episode-play";
+            play.type = "button";
+            play.textContent = "▶";
 
-            };
+            item.appendChild(number);
+            item.appendChild(name);
+            item.appendChild(play);
 
+            item.addEventListener("click", function(){
+                playEpisode(ep, movie);
+            });
 
-    document
-        .getElementById("modal")
-        .classList.add("show");
+            episodeList.appendChild(item);
+        });
 
+        episodeList.classList.add("show");
+
+        /* Main Play = Episode 1 */
+        modalPlay.textContent = "▶ Play Episode 1";
+
+        modalPlay.onclick = function(){
+            playEpisode(movie.episodes[0], movie);
+        };
+
+    }else{
+
+        /* NORMAL MOVIE */
+        episodeList.innerHTML = "";
+        episodeList.classList.remove("show");
+
+        modalPlay.textContent = "▶ Play";
+
+        modalPlay.onclick = function(){
+            playMovie(movie);
+        };
+    }
+
+    document.getElementById("modalAdd").onclick = function(){
+        addToList(movie);
+    };
+
+    document.getElementById("modal").classList.add("show");
 }
 
 
 /* ==================================================
    PLAY / REDIRECT
 ================================================== */
+
+function playEpisode(episode, series){
+
+    if(!episode){
+        alert("Episode information is missing.");
+        return;
+    }
+
+    const rawUrl = String(episode.url || "").trim();
+
+    if(rawUrl === ""){
+        alert(
+            "No watch URL added for " +
+            series.title +
+            " Episode " +
+            episode.episode
+        );
+        return;
+    }
+
+    redirectToWatchUrl(
+        rawUrl,
+        series.title + " - Episode " + episode.episode
+    );
+}
+
 
 function playMovie(movie){
 
@@ -1012,20 +1181,34 @@ function playMovie(movie){
         return;
     }
 
+    /* Safety net: series -> Episode 1 */
+    if(Array.isArray(movie.episodes) && movie.episodes.length > 0){
+        playEpisode(movie.episodes[0], movie);
+        return;
+    }
+
     const rawUrl = String(movie.url || "").trim();
 
     if(rawUrl === ""){
-        alert("No authorized watch URL added for " + movie.title);
+        alert("No watch URL added for " + movie.title);
         return;
     }
+
+    redirectToWatchUrl(rawUrl, movie.title);
+}
+
+
+/* ==================================================
+   COMMON WATCH URL HANDLER
+================================================== */
+
+function redirectToWatchUrl(rawUrl, label){
 
     try{
 
         const target = new URL(rawUrl, window.location.href);
         const path = target.pathname.toLowerCase();
 
-        // Direct audio files play inside YTCflix without opening
-        // the browser's audio page.
         const isAudio =
             /\.(mp3|wav|ogg|m4a|aac|flac)(?:$|\?)/i.test(path);
 
@@ -1042,6 +1225,7 @@ function playMovie(movie){
             }
 
             audio.src = target.href;
+
             audio.play().catch(function(error){
                 console.error("Audio playback failed:", error);
                 alert("The audio could not be played in this browser.");
@@ -1054,18 +1238,16 @@ function playMovie(movie){
             target.protocol !== "http:" &&
             target.protocol !== "https:"
         ){
-            alert("Invalid URL for " + movie.title);
+            alert("Invalid URL for " + label);
             return;
         }
 
-        // Normal authorized web/watch pages open in the same tab.
         window.location.assign(target.href);
 
     }catch(error){
 
         console.error("Invalid URL:", error);
-        alert("Invalid URL for " + movie.title);
-
+        alert("Invalid URL for " + label);
     }
 }
 
